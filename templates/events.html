@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ title if title else 'Все события' }}</h1>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <form action="{{ url_for('events') }}" method="get" class="d-flex">
+            <input type="text" name="search" class="form-control me-2" placeholder="Поиск..." value="{{ search }}">
+            <button type="submit" class="btn btn-primary">Найти</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <div class="btn-group">
+            <a href="{{ url_for('events') }}" class="btn btn-outline-primary">Все</a>
+            <a href="{{ url_for('events') }}?category=лекция" class="btn btn-outline-primary">Лекции</a>
+            <a href="{{ url_for('events') }}?category=мастер-класс" class="btn btn-outline-primary">Мастер-классы</a>
+            <a href="{{ url_for('events') }}?category=фестиваль" class="btn btn-outline-primary">Фестивали</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% for event in events %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ event.title }}</h5>
+                <p class="card-text">{{ event.description[:100] }}...</p>
+                <p class="card-text">
+                    <strong>Когда:</strong> {{ event.date.strftime('%d.%m.%Y %H:%M') }}<br>
+                    <strong>Где:</strong> {{ event.location }}<br>
+                    <strong>Организатор:</strong> {{ event.organizer }}
+                </p>
+                <span class="badge bg-secondary">{{ event.category }}</span>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn btn-primary">Подробнее</a>
+                {% if current_user.is_authenticated %}
+                <button class="btn btn-outline-primary favorite-btn" data-event-id="{{ event.id }}">
+                    ♡
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.favorite-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const eventId = this.dataset.eventId;
+            fetch(`/favorite/${eventId}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'added') {
+                        this.innerHTML = '❤️';
+                    } else {
+                        this.innerHTML = '♡';
+                    }
+                });
+        });
+    });
+});
+</script>
+{% endblock %}

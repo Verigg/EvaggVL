@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title text-center">Вход / Регистрация</h3>
+                
+                <!-- Форма входа -->
+                <h5>Вход</h5>
+                <form method="post">
+                    <input type="hidden" name="action" value="login">
+                    <div class="mb-3">
+                        <label for="login_username" class="form-label">Имя пользователя</label>
+                        <input type="text" class="form-control" id="login_username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="login_password" class="form-label">Пароль</label>
+                        <input type="password" class="form-control" id="login_password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Войти</button>
+                </form>
+
+                <hr class="my-4">
+
+                <!-- Форма регистрации -->
+                <h5>Регистрация</h5>
+                <form method="post">
+                    <input type="hidden" name="action" value="register">
+                    <div class="mb-3">
+                        <label for="reg_username" class="form-label">Имя пользователя</label>
+                        <input type="text" class="form-control" id="reg_username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reg_email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="reg_email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reg_password" class="form-label">Пароль</label>
+                        <input type="password" class="form-control" id="reg_password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Зарегистрироваться</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
