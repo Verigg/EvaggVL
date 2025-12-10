@@ -1,0 +1,86 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Панель управления{% endblock %}
+{% block header %}Панель управления{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">{{ stats.total_events }}</h5>
+                <p class="card-text">Мероприятий</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">{{ stats.total_users }}</h5>
+                <p class="card-text">Пользователей</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">{{ stats.total_favorites }}</h5>
+                <p class="card-text">Избранных</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">{{ stats.total_invitations }}</h5>
+                <p class="card-text">Приглашений</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6>Последние мероприятия</h6>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for event in stats.recent_events %}
+                    <a href="{{ url_for('event_detail', event_id=event.id) }}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ event.title }}</h6>
+                            <small>{{ event.date.strftime('%d.%m.%Y') }}</small>
+                        </div>
+                        <p class="mb-1">{{ event.category }}</p>
+                        <small>{{ event.location }}</small>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6>Последние пользователи</h6>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for user in stats.recent_users %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ user.username }}</h6>
+                            <small>{{ user.email }}</small>
+                        </div>
+                        <p class="mb-1">ID: {{ user.id }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

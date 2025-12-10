@@ -20,6 +20,11 @@
                 {% else %}
                     <a class="nav-link" href="{{ url_for('login') }}">Войти</a>
                 {% endif %}
+                {% if current_user.is_authenticated and current_user.username == 'admin' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Админ-панель</a>
+                </li>
+                {% endif %}
             </div>
         </div>
     </nav>

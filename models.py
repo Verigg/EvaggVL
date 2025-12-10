@@ -11,7 +11,9 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(120))
     preferences = db.Column(db.JSON, default=list)
-    
+    is_active = db.Column(db.Boolean, default=True)  
+    created_at = db.Column(db.DateTime, default=datetime.utcnow) 
+
     favorites = db.relationship('Favorite', backref='user', lazy=True)
     invitations = db.relationship('Invitation', backref='user', lazy=True)
 
