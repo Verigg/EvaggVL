@@ -6,13 +6,22 @@
 <div class="row g-4">
 
     <div class="col-md-4">
-        <div class="card">
+        <div class="card shadow-sm">
             <div class="card-body text-center">
-                <h5>{{ current_user.username }}</h5>
+                <div class="display-6">👤</div>
+                <h5 class="fw-bold">{{ current_user.username }}</h5>
                 <p class="text-muted">{{ current_user.email }}</p>
-                <hr>
-                <p>⭐ Избранное: {{ favorites_count }}</p>
-                <p>✉ Приглашения: {{ invitations_count }}</p>
+
+                <div class="d-flex justify-content-around mt-3">
+                    <div>
+                        <strong>{{ favorites_count }}</strong><br>
+                        <small>Избранное</small>
+                    </div>
+                    <div>
+                        <strong>{{ invitations_count }}</strong><br>
+                        <small>Приглашения</small>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

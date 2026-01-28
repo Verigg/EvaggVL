@@ -1,47 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8">
-        <h1>{{ event.title }}</h1>
+<div class="row g-4">
+    <div class="col-lg-8">
+        <h1 class="fw-bold mb-3">{{ event.title }}</h1>
         <p class="lead">{{ event.description }}</p>
-        
-        <div class="card">
+
+        <div class="card shadow-sm">
             <div class="card-body">
-                <h5>Информация о событии</h5>
-                <p><strong>Дата и время:</strong> {{ event.date.strftime('%d.%m.%Y %H:%M') }}</p>
-                <p><strong>Место:</strong> {{ event.location }}</p>
-                <p><strong>Организатор:</strong> {{ event.organizer }}</p>
-                <p><strong>Категория:</strong> <span class="badge bg-primary">{{ event.category }}</span></p>
+                <h5 class="mb-3">📌 Детали</h5>
+                <p><strong>🕒 Когда:</strong> {{ event.date.strftime('%d.%m.%Y %H:%M') }}</p>
+                <p><strong>📍 Где:</strong> {{ event.location }}</p>
+                <p><strong>👤 Организатор:</strong> {{ event.organizer }}</p>
+                <span class="badge bg-primary">{{ event.category }}</span>
             </div>
         </div>
     </div>
-    
-    <div class="col-md-4">
-        <div class="card">
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm sticky-top" style="top: 90px;">
             <div class="card-body">
                 {% if current_user.is_authenticated %}
-                <button class="btn btn-warning mb-2 w-100 favorite-btn" data-event-id="{{ event.id }}">
+                <button class="btn btn-warning w-100 mb-3 favorite-btn"
+                        data-event-id="{{ event.id }}">
                     {% if is_favorite %}❤️ В избранном{% else %}♡ Добавить в избранное{% endif %}
                 </button>
-                
-                <h5>Пригласить друга</h5>
-                <form action="{{ url_for('invite_friend', event_id=event.id) }}" method="post">
-                    <div class="mb-3">
-                        <input type="text" name="friend" class="form-control" placeholder="Ник или email" required>
-                    </div>
-                    <div class="mb-3">
-                        <textarea name="message" class="form-control" placeholder="Сообщение (необязательно)"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-success w-100">Отправить приглашение</button>
-                </form>
-                {% else %}
-                <p><a href="{{ url_for('login') }}">Войдите</a>, чтобы добавить в избранное и приглашать друзей</p>
+
+                <h6 class="fw-bold">Пригласить друга</h6>
+                ...
                 {% endif %}
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block scripts %}
