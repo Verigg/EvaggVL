@@ -1,33 +1,66 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1>Настройки профиля</h1>
 
-<div class="row">
-    <div class="col-md-6">
+<h1 class="mb-4">Профиль</h1>
+
+<div class="row g-4">
+
+    <div class="col-md-4">
         <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Предпочтения</h5>
-                <form method="post">
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="preferences" value="лекция" 
-                               id="lecture" {% if 'лекция' in (current_user.preferences or []) %}checked{% endif %}>
-                        <label class="form-check-label" for="lecture">Лекции</label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="preferences" value="мастер-класс" 
-                               id="masterclass" {% if 'мастер-класс' in (current_user.preferences or []) %}checked{% endif %}>
-                        <label class="form-check-label" for="masterclass">Мастер-классы</label>
-                    </div>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" name="preferences" value="фестиваль" 
-                               id="festival" {% if 'фестиваль' in (current_user.preferences or []) %}checked{% endif %}>
-                        <label class="form-check-label" for="festival">Фестивали</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Сохранить предпочтения</button>
-                </form>
+            <div class="card-body text-center">
+                <h5>{{ current_user.username }}</h5>
+                <p class="text-muted">{{ current_user.email }}</p>
+                <hr>
+                <p>⭐ Избранное: {{ favorites_count }}</p>
+                <p>✉ Приглашения: {{ invitations_count }}</p>
             </div>
         </div>
     </div>
+
+    <div class="col-md-8">
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Предпочтения</h5>
+                <form method="post">
+                    {% for cat in categories %}
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="preferences"
+                                   value="{{ cat }}"
+                                   id="{{ cat }}"
+                                   {% if cat in (current_user.preferences or []) %}checked{% endif %}>
+                            <label class="form-check-label" for="{{ cat }}">
+                                {{ cat|capitalize }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                    <button class="btn btn-primary mt-3">Сохранить</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Последние избранные</h5>
+                {% if last_favorites %}
+                    <ul class="list-group">
+                        {% for event in last_favorites %}
+                            <li class="list-group-item">
+                                <a href="{{ url_for('event_detail', event_id=event.id) }}">
+                                    {{ event.title }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">Пока пусто</p>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
 </div>
+
 {% endblock %}

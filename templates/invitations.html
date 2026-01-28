@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Приглашения{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Приглашения</h1>
+
+{% if invitations %}
+    <div class="row g-3">
+        {% for inv in invitations %}
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {{ inv.event.title }}
+                        </h5>
+
+                        <p class="mb-1">
+                            <strong>От:</strong> {{ inv.sender.username }}
+                        </p>
+
+                        {% if inv.message %}
+                            <p class="text-muted mb-2">
+                                “{{ inv.message }}”
+                            </p>
+                        {% endif %}
+
+                        <p class="small text-muted">
+                            {{ inv.created_at.strftime('%d.%m.%Y %H:%M') }}
+                        </p>
+
+                        {% if inv.status == 'new' %}
+                            <div class="d-flex gap-2">
+                                <form method="post"
+                                      action="{{ url_for('invitation_action', id=inv.id, action='accept') }}">
+                                    <button class="btn btn-success btn-sm">
+                                        Принять
+                                    </button>
+                                </form>
+
+                                <form method="post"
+                                      action="{{ url_for('invitation_action', id=inv.id, action='decline') }}">
+                                    <button class="btn btn-outline-danger btn-sm">
+                                        Отклонить
+                                    </button>
+                                </form>
+                            </div>
+                        {% elif inv.status == 'accepted' %}
+                            <span class="badge bg-success">Принято</span>
+                        {% elif inv.status == 'declined' %}
+                            <span class="badge bg-secondary">Отклонено</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-secondary">
+        У вас пока нет приглашений
+    </div>
+{% endif %}
+
+{% endblock %}

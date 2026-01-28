@@ -28,7 +28,7 @@
                 <h5>Пригласить друга</h5>
                 <form action="{{ url_for('invite_friend', event_id=event.id) }}" method="post">
                     <div class="mb-3">
-                        <input type="email" name="friend_email" class="form-control" placeholder="Email друга" required>
+                        <input type="text" name="friend" class="form-control" placeholder="Ник или email" required>
                     </div>
                     <div class="mb-3">
                         <textarea name="message" class="form-control" placeholder="Сообщение (необязательно)"></textarea>

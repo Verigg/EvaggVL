@@ -141,31 +141,85 @@ def favorites():
 @app.route('/invite/<int:event_id>', methods=['POST'])
 @login_required
 def invite_friend(event_id):
-    friend_email = request.form.get('friend_email')
+    friend = request.form.get('friend')
     message = request.form.get('message', '')
-    
+
+    receiver = User.query.filter_by(username=friend).first()
+
     invitation = Invitation(
-        user_id=current_user.id,
-        friend_email=friend_email,
+        sender_id=current_user.id,
         event_id=event_id,
         message=message
     )
+
+    if receiver:
+        invitation.receiver_id = receiver.id
+        flash(f'Пользователь @{receiver.username} получил приглашение', 'success')
+    else:
+        invitation.friend_email = friend
+        flash('Приглашение отправлено по email (пока без доставки 🙂)', 'info')
+
     db.session.add(invitation)
     db.session.commit()
-    
-    flash('Приглашение отправлено!', 'success')
+
     return redirect(url_for('event_detail', event_id=event_id))
+
+@app.route('/invitation/<int:id>/<action>', methods=['POST'])
+@login_required
+def invitation_action(id, action):
+    inv = Invitation.query.get_or_404(id)
+
+    if inv.receiver_id != current_user.id:
+        abort(403)
+
+    if action == 'accept':
+        inv.status = 'accepted'
+    elif action == 'decline':
+        inv.status = 'declined'
+
+    db.session.commit()
+    return redirect(url_for('my_invitations'))
+
+@app.route('/invitations')
+@login_required
+def my_invitations():
+    invitations = Invitation.query.filter_by(
+        receiver_id=current_user.id
+    ).order_by(Invitation.created_at.desc()).all()
+
+    return render_template('invitations.html', invitations=invitations)
 
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
     if request.method == 'POST':
-        preferences = request.form.getlist('preferences')
-        current_user.preferences = preferences
+        current_user.preferences = request.form.getlist('preferences')
         db.session.commit()
         flash('Настройки сохранены!', 'success')
+
+    favorites_count = Favorite.query.filter_by(user_id=current_user.id).count()
+    invitations_count = Invitation.query.filter_by(
+        receiver_id=current_user.id
+    ).count()
     
-    return render_template('profile.html')
+    last_favorites = (
+        Event.query
+        .join(Favorite)
+        .filter(Favorite.user_id == current_user.id)
+        .order_by(Event.date.desc())
+        .limit(5)
+        .all()
+    )
+
+    categories = ['лекция', 'мастер-класс', 'фестиваль', 'конференция']
+
+    return render_template(
+        'profile.html',
+        favorites_count=favorites_count,
+        invitations_count=invitations_count,
+        last_favorites=last_favorites,
+        categories=categories
+    )
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

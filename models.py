@@ -15,7 +15,19 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow) 
 
     favorites = db.relationship('Favorite', backref='user', lazy=True)
-    invitations = db.relationship('Invitation', backref='user', lazy=True)
+    sent_invitations = db.relationship(
+        'Invitation',
+        foreign_keys='Invitation.sender_id',
+        backref='sender',
+        lazy=True
+    )
+
+    received_invitations = db.relationship(
+        'Invitation',
+        foreign_keys='Invitation.receiver_id',
+        backref='receiver',
+        lazy=True
+    )
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -44,8 +56,29 @@ class Favorite(db.Model):
 
 class Invitation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    friend_email = db.Column(db.String(120), nullable=False)
-    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+
+    sender_id = db.Column(
+        db.Integer,
+        db.ForeignKey('user.id'),
+        nullable=False
+    )
+
+    receiver_id = db.Column(
+        db.Integer,
+        db.ForeignKey('user.id'),
+        nullable=True
+    )
+
+    friend_email = db.Column(db.String(120), nullable=True)
+
+    event_id = db.Column(
+        db.Integer,
+        db.ForeignKey('event.id'),
+        nullable=False
+    )
+
     message = db.Column(db.Text)
+    status = db.Column(db.String(20), default='new')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    event = db.relationship('Event')
